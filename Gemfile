@@ -50,3 +50,5 @@ group :development do
   gem 'rubocop-performance', '~> 1.19', require: false
   gem 'rubocop-rails', '~> 2.21', require: false
 end
+
+gem 'pg'
