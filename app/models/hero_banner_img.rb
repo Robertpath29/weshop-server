@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class HeroBannerImg < ApplicationRecord
-  before_validation :set_default_placehold
+  has_one_attached :img
+  before_validation :set_default_placeholder
 
-  validates :path, presence: true, uniqueness: true
+  validates :title, presence: true, uniqueness: true
 
   private
 
-  def set_default_placehold
-    self.placehold ||= 'banner'
+  def set_default_placeholder
+    self.placeholder ||= 'banner'
   end
 end
