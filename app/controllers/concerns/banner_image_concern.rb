@@ -2,6 +2,7 @@
 
 module BannerImageConcern
   extend ActiveSupport::Concern
+  require 'mini_magick'
 
   included do
     private
@@ -41,9 +42,10 @@ module BannerImageConcern
   end
 
   def image?(file)
-    image_format = %w[jpg jpeg gif png]
-    extension = File.extname(file).downcase.delete('.')
-    image_format.include?(extension)
+    MiniMagick::Image.read(file)
+    true
+  rescue MiniMagick::Invalid
+    false
   end
 
   def give_images
