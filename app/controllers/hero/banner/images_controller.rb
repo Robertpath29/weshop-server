@@ -4,6 +4,9 @@ module Hero
   module Banner
     class ImagesController < ApplicationController
       include BannerImageConcern
+
+      before_action :set_image!, only: %i[destroy]
+
       def index
         render json: { images: give_images }
       end
@@ -22,12 +25,20 @@ module Hero
         end
       end
 
-      def destroy; end
+      def destroy
+        @image.destroy
+        @image.img.purge_later if @image.img.attached?
+        render json: { status: 'success', message: 'Image delete' }
+      end
 
       private
 
       def params_img
         params.permit(:title, :url, :placeholder, :img)
+      end
+
+      def set_image!
+        @image = HeroBannerImg.find(params[:id])
       end
     end
   end
