@@ -52,4 +52,5 @@ group :development do
   gem 'rubocop-rails', '~> 2.21', require: false
 end
 
+gem 'aws-sdk-s3', require: false
 gem 'pg'
