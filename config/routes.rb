@@ -8,4 +8,6 @@ Rails.application.routes.draw do
       resources :images, only: %i[index create destroy]
     end
   end
+
+  resources :users, only: %i[create]
 end
