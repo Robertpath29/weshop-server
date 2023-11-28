@@ -10,4 +10,5 @@ Rails.application.routes.draw do
   end
 
   resources :users, only: %i[create]
+  resources :sessions, only: %i[create destroy]
 end
