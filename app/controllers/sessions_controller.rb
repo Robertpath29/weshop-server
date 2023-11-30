@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
+  before_action :find_user, only: %i[destroy]
+
   def create
     if params[:remember_token].present?
       log_in_user_cookie
@@ -9,7 +11,19 @@ class SessionsController < ApplicationController
     end
   end
 
+  def destroy
+    if @user.forget
+      render json: { status: 'success', message: 'token delete' }
+    else
+      render json: { status: 'error', message: @user.errors.full_messages.join(', ') }
+    end
+  end
+
   private
+
+  def find_user
+    @user = User.find_by(id: params[:id])
+  end
 
   def log_in_user_cookie
     user = User.find_by(id: params[:id])
