@@ -3,8 +3,6 @@
 module Hero
   module Banner
     class ImagesController < ApplicationController
-      include BannerImageConcern
-
       before_action :set_image!, only: %i[destroy]
 
       def index
