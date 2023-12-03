@@ -2,14 +2,18 @@
 
 class User < ApplicationRecord
   before_validation :downcase_email
-  attr_accessor :remember_token
+  attr_accessor :remember_token, :old_password
 
-  has_secure_password
+  has_secure_password validations: false
+
   validates :email, presence: true, uniqueness: true
   validates :name, presence: true, length: { minimum: 3, maximum: 20 }
+  validates :password, confirmation: true, allow_blank: true, length: { minimum: 5, maximum: 50 }
 
-  validate :correct_email, on: :create
-  validate :name_not_integer, on: :create
+  validate :correct_email, on: %i[create update]
+  validate :name_not_integer, on: %i[create update]
+  validate :password_presence
+  validate :correct_old_password, on: :update, if: -> { password.present? }
 
   def remember
     self.remember_token = SecureRandom.urlsafe_base64
@@ -30,6 +34,16 @@ class User < ApplicationRecord
   end
 
   private
+
+  def password_presence
+    errors.add(:password, :blank) if password_digest.blank?
+  end
+
+  def correct_old_password
+    return if BCrypt::Password.new(password_digest_was).is_password?(old_password)
+
+    errors.add :old_password, 'is incorrect'
+  end
 
   def correct_email
     address = ValidEmail2::Address.new(email)

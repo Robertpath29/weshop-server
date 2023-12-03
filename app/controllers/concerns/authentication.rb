@@ -7,15 +7,15 @@ module Authentication
     private
 
     def log_in
-      @current_user = if params[:email].present?
-                        User.find_by(email: params[:email].downcase)
-                      else
-                        User.find_by(id: params[:id])
-                      end
+      current_user = if params[:email].present?
+                       User.find_by(email: params[:email].downcase)
+                     else
+                       User.find_by(id: params[:id])
+                     end
       if params[:remember_token].present?
-        log_in_token(@current_user)
+        log_in_token(current_user)
       else
-        log_in_password(@current_user)
+        log_in_password(current_user)
       end
     end
 
@@ -38,16 +38,6 @@ module Authentication
       else
         render json: { status: 'error', message: 'Incorrect remember token!' }
       end
-    end
-
-    def user_signed_in?
-      @current_user.present?
-    end
-
-    def require_authentication
-      return if user_signed_in?
-
-      render json: { status: 'error', message: 'you not log in!' }
     end
   end
   # rubocop:enable Metrics/BlockLength

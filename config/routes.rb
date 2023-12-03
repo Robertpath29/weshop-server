@@ -9,6 +9,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :users, only: %i[create]
+  resources :users, only: %i[create update]
   resources :sessions, only: %i[create destroy]
 end
