@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  include Recoverable
   before_validation :downcase_email
-  attr_accessor :remember_token, :old_password
+  attr_accessor :remember_token, :old_password, :admin_edit
 
   has_secure_password validations: false
 
@@ -13,7 +14,7 @@ class User < ApplicationRecord
   validate :correct_email, on: %i[create update]
   validate :name_not_integer, on: %i[create update]
   validate :password_presence
-  validate :correct_old_password, on: :update, if: -> { password.present? }
+  validate :correct_old_password, on: :update, if: -> { password.present? && !admin_edit }
 
   def remember
     self.remember_token = SecureRandom.urlsafe_base64
