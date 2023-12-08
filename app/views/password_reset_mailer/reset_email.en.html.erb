@@ -1,6 +1,18 @@
 <h1>Password change request.</h1>
 <p>
-  <%= link_to 'Reset my password', edit_password_reset_url(
+  If you want to change your password, click here:<span>
+    <%= link_to 'Reset my password', edit_password_reset_url(
     user:{password_reset_token: @user.password_reset_token, 
     email: @user.email}, locale: :en), target: "_blank" %>
+  </span>. If it's not you, just ignore this email!
 </p>
+<div class="container-logo">
+  <p>Click 
+    to shop!
+  </p>
+  <a href="http://127.0.0.1:3000/">
+    <div class="logo">
+      <span>weshop</span>
+    </div>
+  </a>
+</div>
