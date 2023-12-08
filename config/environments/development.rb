@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/integer/time'
-
+# rubocop:disable Metrics/BlockLength
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -39,10 +39,16 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = false
 
   config.action_mailer.perform_caching = false
-  config.action_mailer.delivery_method = :letter_opener
-  config.action_mailer.perform_deliveries = true
-  config.action_mailer.default_url_options = { host: '127.0.0.1:3000' }
-
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: 'email-smtp.eu-central-1.amazonaws.com',
+    port: 587,
+    user_name: 'AKIASTRYQRC3L74Q73XA',
+    password: 'BHD0MGF6PXDxlr1CPvRkabhkqluaiD/otNe2NyXj+pcE',
+    authentication: 'plain',
+    enable_starttls_auto: true
+  }
+  config.action_mailer.default_url_options = { host: '192.168.1.108:3000' }
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
@@ -67,3 +73,4 @@ Rails.application.configure do
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
 end
+# rubocop:enable Metrics/BlockLength
