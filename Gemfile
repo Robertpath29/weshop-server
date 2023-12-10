@@ -52,8 +52,7 @@ group :development do
   gem 'rubocop-performance', '~> 1.19', require: false
   gem 'rubocop-rails', '~> 2.21', require: false
 end
-
-gem 'aws-sdk-s3', require: false
+gem 'aws-sdk', '~> 3'
 gem 'pg'
 
 gem 'valid_email2', '~> 5.1'
