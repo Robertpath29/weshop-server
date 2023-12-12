@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'aws-sdk-ses'
 
 aws_credentials = Rails.application.credentials[:aws]

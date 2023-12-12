@@ -3,6 +3,7 @@
 class User < ApplicationRecord
   include Recoverable
   before_validation :downcase_email
+  enum role: { basic: 0, moderator: 1, admin: 2 }, _suffix: :role
   attr_accessor :remember_token, :old_password, :admin_edit
 
   has_secure_password validations: false
@@ -15,6 +16,7 @@ class User < ApplicationRecord
   validate :name_not_integer, on: %i[create update]
   validate :password_presence
   validate :correct_old_password, on: :update, if: -> { password.present? && !admin_edit }
+  validates :role, presence: true
 
   def remember
     self.remember_token = SecureRandom.urlsafe_base64
@@ -32,6 +34,10 @@ class User < ApplicationRecord
     return false if remember_token_digest.blank?
 
     BCrypt::Password.new(remember_token_digest).eql?(remember_token)
+  end
+
+  def formatted_created_at
+    created_at.strftime('%d-%m-%y / %H:%M:%S')
   end
 
   private
