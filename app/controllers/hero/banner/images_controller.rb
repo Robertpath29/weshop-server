@@ -16,10 +16,10 @@ module Hero
             process_image(img)
 
           else
-            render json: { status: 'error', message: 'Invalid image format' }, status: :unprocessable_entity
+            render json: { status: 'error', message: 'Invalid image format' }
           end
         else
-          render json: { status: 'error', message: 'No image' }, status: :unprocessable_entity
+          render json: { status: 'error', message: 'No image' }
         end
       end
 

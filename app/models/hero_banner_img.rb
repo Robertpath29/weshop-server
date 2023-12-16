@@ -9,6 +9,6 @@ class HeroBannerImg < ApplicationRecord
   private
 
   def set_default_placeholder
-    self.placeholder ||= 'banner'
+    self.placeholder = 'banner' if placeholder.blank?
   end
 end

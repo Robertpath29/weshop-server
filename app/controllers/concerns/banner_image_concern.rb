@@ -36,8 +36,7 @@ module BannerImageConcern
     if img.save
       render json: { status: 'success', message: 'Image attached successfully' }
     else
-      render json: { status: 'error', message: img.errors.full_messages.join(', ') },
-             status: :unprocessable_entity
+      render json: { status: 'error', message: img.errors.full_messages.join(', ') }
     end
   end
 
