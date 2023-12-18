@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_10_105842) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_16_111456) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -49,6 +49,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_10_105842) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["title"], name: "index_hero_banner_imgs_on_title", unique: true
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description", null: false
+    t.string "category", null: false
+    t.string "type_of_clothing", null: false
+    t.string "color"
+    t.string "sizes", default: [], array: true
+    t.decimal "price", null: false
+    t.decimal "old_price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
