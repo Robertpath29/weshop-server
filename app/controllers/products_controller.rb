@@ -24,9 +24,15 @@ class ProductsController < ApplicationController
   end
 
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def create
     product = Product.new product_params
-    product.images.attach(params[:images]) if params[:images].present?
+    if params[:images].present?
+      params[:images].map do |img|
+        return render json: { status: 'error', message: 'Invalid image format' } unless image?(img)
+      end
+      product.images.attach(params[:images])
+    end
     if product.save
       delete_identical_images(product) if params[:images].present?
       render json: { status: 'success', message: 'Product created' }
@@ -36,6 +42,7 @@ class ProductsController < ApplicationController
   end
 
   # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
   def destroy
     if params[:img_id].present?
       destroy_image
