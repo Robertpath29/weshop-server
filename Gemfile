@@ -56,3 +56,4 @@ gem 'aws-sdk', '~> 3'
 gem 'pg'
 
 gem 'valid_email2', '~> 5.1'
+gem 'will_paginate', '~> 4.0'

@@ -3,14 +3,14 @@
 class ProductsController < ApplicationController
   before_action :set_product!, only: %i[destroy]
   def index
-    products = Product.all
+    products = sort_product.paginate(page: params[:page], per_page: params[:per_page])
     product_path_img = products.map do |product|
       {
         product:,
         path_img: images_info(product)
       }
     end
-    render json: { status: 'success', products: product_path_img }
+    render json: { status: 'success', products: product_path_img, total_pages: products.total_pages }
   end
 
   def show
@@ -56,6 +56,37 @@ class ProductsController < ApplicationController
   end
 
   private
+
+  def sort_product
+    products = sort_by
+    products = sort_color(products)
+    products = sort_category(products)
+  end
+
+  def sort_by
+    if params[:sort_by] == 'data'
+      Product.order(created_at: :desc)
+    else
+      Product
+    end
+  end
+
+  def sort_color(products)
+    if params[:color].present?
+      products.where(color: params[:color])
+    else
+      products
+    end
+  end
+
+  def sort_category(products)
+    if params[:category].present?
+      products.where(category: params[:category])
+    else
+      products
+    end
+  end
+  # paginate(page: params[:page], per_page: params[:per_page])
 
   def product_params
     params.permit(
