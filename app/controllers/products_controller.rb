@@ -3,8 +3,10 @@
 # rubocop:disable Metrics/ClassLength
 class ProductsController < ApplicationController
   before_action :set_product!, only: %i[destroy]
+  # rubocop:disable Metrics/MethodLength
   def index
     category = Product.pluck(:category)
+    max_price = Product.maximum(:price)
     products = sort_product.paginate(page: params[:page], per_page: params[:per_page])
     product_path_img = products.map do |product|
       {
@@ -13,9 +15,10 @@ class ProductsController < ApplicationController
       }
     end
     render json: { status: 'success', products: product_path_img, total_pages: products.total_pages,
-                   category: }
+                   category:, max_price: }
   end
 
+  # rubocop:enable Metrics/MethodLength
   def show
     product = Product.find params[:id]
     if product.present?
@@ -64,6 +67,7 @@ class ProductsController < ApplicationController
     products = sort_by
     products = sort_color(products)
     products = sort_category(products)
+    sort_price(products)
   end
 
   def sort_by
@@ -89,7 +93,14 @@ class ProductsController < ApplicationController
       products
     end
   end
-  # paginate(page: params[:page], per_page: params[:per_page])
+
+  def sort_price(products)
+    if params[:min_price].present? && params[:max_price].present? && params[:max_price].to_i != 0
+      products.where(price: params[:min_price]..params[:max_price])
+    else
+      products
+    end
+  end
 
   def product_params
     params.permit(
