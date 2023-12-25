@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class ProductsController < ApplicationController
   before_action :set_product!, only: %i[destroy]
   def index
+    category = Product.pluck(:category)
     products = sort_product.paginate(page: params[:page], per_page: params[:per_page])
     product_path_img = products.map do |product|
       {
@@ -10,7 +12,8 @@ class ProductsController < ApplicationController
         path_img: images_info(product)
       }
     end
-    render json: { status: 'success', products: product_path_img, total_pages: products.total_pages }
+    render json: { status: 'success', products: product_path_img, total_pages: products.total_pages,
+                   category: }
   end
 
   def show
@@ -128,3 +131,4 @@ class ProductsController < ApplicationController
     @product = Product.find_by id: params[:id]
   end
 end
+# rubocop:enable Metrics/ClassLength
