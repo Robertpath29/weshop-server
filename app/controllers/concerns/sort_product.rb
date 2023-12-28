@@ -11,7 +11,8 @@ module SortProduct
       products = sort_color(products)
       products = sort_category(products)
       products = sort_price(products)
-      sort_size(products)
+      products = sort_size(products)
+      sort_keyword(products)
     end
 
     def sort_by
@@ -51,6 +52,16 @@ module SortProduct
 
         products.where('sizes @> ?', "{#{params[:size]}}")
 
+      else
+        products
+      end
+    end
+
+    def sort_keyword(products)
+      if params[:keyword].present?
+        keyword = params[:keyword].upcase
+        products.where('UPPER(title) = :keyword OR UPPER(category) = :keyword OR UPPER(type_of_clothing) = :keyword OR UPPER(color) = :keyword',
+                       keyword:)
       else
         products
       end
