@@ -3,10 +3,17 @@
 class ProductsController < ApplicationController
   before_action :set_product!, only: %i[destroy]
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def index
-    category = Product.pluck(:category)
+    oll_category = Product.pluck(:category)
     oll_sizes = Product.pluck(:sizes).flatten
     max_price = Product.maximum(:price)
+    best_sale = Product.where.not(old_price: nil).order('RANDOM()').limit(2).to_a.map do |product|
+      {
+        product:,
+        path_img: images_info(product)
+      }
+    end
     products = sort_product.paginate(page: params[:page], per_page: params[:per_page])
     product_path_img = products.map do |product|
       {
@@ -15,7 +22,7 @@ class ProductsController < ApplicationController
       }
     end
     render json: { status: 'success', products: product_path_img, total_pages: products.total_pages,
-                   category:, max_price:, oll_sizes: }
+                   oll_category:, max_price:, oll_sizes:, best_sale: }
   end
 
   # rubocop:enable Metrics/MethodLength
@@ -29,7 +36,6 @@ class ProductsController < ApplicationController
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   def create
     product = Product.new product_params
