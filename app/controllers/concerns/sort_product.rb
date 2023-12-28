@@ -19,7 +19,7 @@ module SortProduct
       if params[:sort_by] == 'data'
         Product.order(created_at: :desc)
       else
-        Product
+        Product.order(created_at: :desc).where(type_of_clothing: params[:sort_by])
       end
     end
 
