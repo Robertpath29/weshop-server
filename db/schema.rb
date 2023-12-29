@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_16_111456) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_29_123607) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -62,6 +62,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_16_111456) do
     t.decimal "old_price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "users_who_have_rated", default: [], array: true
+    t.integer "number_all_stars", default: 0
+    t.index ["users_who_have_rated"], name: "index_products_on_users_who_have_rated", using: :gin
   end
 
   create_table "users", force: :cascade do |t|

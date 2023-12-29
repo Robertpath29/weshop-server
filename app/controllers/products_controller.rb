@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class ProductsController < ApplicationController
-  before_action :set_product!, only: %i[destroy]
+  before_action :set_product!, only: %i[destroy update]
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def index
@@ -25,7 +26,6 @@ class ProductsController < ApplicationController
                    oll_category:, max_price:, oll_sizes:, best_sale: }
   end
 
-  # rubocop:enable Metrics/MethodLength
   def show
     product = Product.find params[:id]
     if product.present?
@@ -36,6 +36,7 @@ class ProductsController < ApplicationController
     end
   end
 
+  # rubocop:enable Metrics/MethodLength
   # rubocop:disable Metrics/MethodLength
   def create
     product = Product.new product_params
@@ -53,6 +54,16 @@ class ProductsController < ApplicationController
     end
   end
 
+  def update
+    return unless params[:user_id].present? && params[:rating].present?
+    return render json: { status: 'error', message: 'User not found!' } unless user_register?(params[:user_id])
+    return render json: { status: 'error', message: 'You have already rated' } if the_user_rated?(params[:user_id].to_i)
+    return render json: { status: 'error', message: 'The score cannot be more than 5!' } if params[:rating].to_i > 5
+    return render json: { status: 'error', message: 'The score cannot be less than 1' } if params[:rating].to_i < 1
+
+    save_rating_product
+  end
+
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
   def destroy
@@ -68,6 +79,24 @@ class ProductsController < ApplicationController
   end
 
   private
+
+  def save_rating_product
+    @product.users_who_have_rated << params[:user_id]
+    @product.number_all_stars += params[:rating].to_i
+    if @product.save
+      render json: { status: 'success', message: 'You have rated it!' }
+    else
+      render json: { status: 'error', message: @product.errors.full_messages.join(', ') }
+    end
+  end
+
+  def the_user_rated?(user)
+    @product.users_who_have_rated.include?(user)
+  end
+
+  def user_register?(user_id)
+    User.find_by(id: user_id)
+  end
 
   def product_params
     params.permit(
@@ -109,3 +138,4 @@ class ProductsController < ApplicationController
     @product = Product.find_by id: params[:id]
   end
 end
+# rubocop:enable Metrics/ClassLength
