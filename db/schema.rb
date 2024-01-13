@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_29_123607) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_11_101423) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -64,6 +64,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_29_123607) do
     t.datetime "updated_at", null: false
     t.integer "users_who_have_rated", default: [], array: true
     t.integer "number_all_stars", default: 0
+    t.text "extended_description"
+    t.string "compositions", default: [], array: true
+    t.text "history"
     t.index ["users_who_have_rated"], name: "index_products_on_users_who_have_rated", using: :gin
   end
 

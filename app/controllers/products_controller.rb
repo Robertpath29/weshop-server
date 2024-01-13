@@ -30,7 +30,7 @@ class ProductsController < ApplicationController
     product = Product.find params[:id]
     if product.present?
 
-      render json: { status: 'success', products: product, paths_img: images_info(product) }
+      render json: { status: 'success', product:, paths_img: images_info(product) }
     else
       render json: { status: 'error', message: 'product not found' }
     end
@@ -54,16 +54,29 @@ class ProductsController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/Metrics/CyclomaticComplexity
   def update
-    return unless params[:user_id].present? && params[:rating].present?
-    return render json: { status: 'error', message: 'User not found!' } unless user_register?(params[:user_id])
-    return render json: { status: 'error', message: 'You have already rated' } if the_user_rated?(params[:user_id].to_i)
-    return render json: { status: 'error', message: 'The score cannot be more than 5!' } if params[:rating].to_i > 5
-    return render json: { status: 'error', message: 'The score cannot be less than 1' } if params[:rating].to_i < 1
+    if params[:user_id].present? && params[:rating].present?
+      return render json: { status: 'error', message: 'User not found!' } unless user_register?(params[:user_id])
 
-    save_rating_product
+      if the_user_rated?(params[:user_id].to_i)
+        return render json: { status: 'error',
+                              message: 'You have already rated' }
+      end
+      return render json: { status: 'error', message: 'The score cannot be more than 5!' } if params[:rating].to_i > 5
+      return render json: { status: 'error', message: 'The score cannot be less than 1' } if params[:rating].to_i < 1
+
+      save_rating_product
+    elsif @product.update product_params
+      render json: { status: 'success', message: 'Product updated' }
+    else
+      render json: { status: 'error', message: @product.errors.full_messages.join(', ') }
+    end
   end
 
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
   def destroy
@@ -101,7 +114,7 @@ class ProductsController < ApplicationController
   def product_params
     params.permit(
       :title, :description, :category, :type_of_clothing, :color,
-      :price, :old_price, sizes: [], images: []
+      :price, :old_price, :extended_description, :history, compositions: [], sizes: [], images: []
     )
   end
 
